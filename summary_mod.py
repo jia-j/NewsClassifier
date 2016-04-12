@@ -17,6 +17,7 @@ def calculate_frequencies(sentences_ll, user_stopwords=None):  # sentences_ll is
     
     for sentence in sentences_ll:
         for word in sentence:
+            word = word.lower()
             if word not in stopwords:
                 frequency[word] += 1
 
@@ -81,4 +82,4 @@ article_title = "Virat on fire!"
 article = (article_title, article_body)
 
 #print summarise(article, 2)
-print get_features(article, 10, ["Kohli"])
+#print get_features(article, 10, ["Kohli"])
