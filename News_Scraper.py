@@ -12,6 +12,7 @@ def WashingtonPost(url):
     try:
         webpage = urllib2.urlopen(url).read().decode('utf8')
     except:
+        print "Failed urlopen()"
         return (None, None)
 
     soup = BeautifulSoup(webpage)
@@ -69,12 +70,18 @@ def W_Scraper(url, dial=1):
     
     all_content = {}
     
+    reg_exp = r'\/\?.*'
+    
     errors = 0
     for link in soup.find_all('a'):
         try:
             _url = link['href']
+            # Clip the URL:
+            _url = re.sub(reg_exp, "/", _url)
+            
             if dial == 1:
                 if _url not in all_content and '2016' in _url and 'washington' in _url and ('switch' in _url or 'innovation' in _url) and '.com/video/' not in _url:
+#                    print "Trying to scrape Tech: ", _url
                     article = WashingtonPost(_url)
                     if len(article) > 0:
                         all_content[_url] = article
@@ -82,6 +89,7 @@ def W_Scraper(url, dial=1):
             # Sports
             else:
                 if _url not in all_content and '2016' in _url and 'washington' in _url:
+#                    print "Trying to scrape Non-Tech: ", _url
                     article = WashingtonPost(_url)
                     if len(article) > 0:
                         all_content[_url] = article
