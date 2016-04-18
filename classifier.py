@@ -1,4 +1,5 @@
 from summary_mod import get_features
+from News_Scraper import HindustanTimes
 
 from collections import defaultdict
 from heapq import nlargest
@@ -42,24 +43,46 @@ def prepareFeatures_csv():
 
     print main_list
 
-    with open('latest_features.csv', 'wb') as file:
-        writer = csv.writer(file, delimiter=',', quotechar='"')
-        print "Writing features to CSV"
-        for dict in main_list:
-            writer.writerow([dict['feature_vector'], dict['label']])
+#    with open('latest_features.csv', 'wb') as file:
+#        writer = csv.writer(file, delimiter=',', quotechar='"')
+#        print "Writing features to CSV"
+#        for dict in main_list:
+#            writer.writerow([dict['feature_vector'], dict['label']])
 
     print "\nDONE!"
 
-#prepareFeatures_csv()
+prepareFeatures_csv()
 #--------------------------------------------------#
 
 
 #article = HindustanTimes("http://www.hindustantimes.com/tech/facebook-has-a-new-research-lab-led-by-ex-google-executive/story-7YYln1vKdh3tMihW6rZFNK.html")
 
+#article = HindustanTimes("http://www.hindustantimes.com/other-sports/dipa-karmakar-becomes-first-indian-gymnast-to-qualify-for-olympics/story-IvvCXJsxkkvt8Mq3p5telN.html")
+
+article = HindustanTimes("http://www.hindustantimes.com/india/drinking-beer-not-our-culture-use-water-to-save-lives-first-shiv-sena/story-gvpAmfDPpdlPZve6K8fLoL.html")
+
 # k-NN
-#test_features = get_features(article, 25)
-#print "TEST FEATURES:\n\n\n\n", test_features
-#
+#article[0] = article[0].decode("ascii", errors="ignore")
+#article[1] = article[1].decode("ascii", errors="ignore")
+test_features = get_features(article, 25)
+print "Test Features:", test_features
+
+similar = {}
+
+for i,dict in enumerate(main_list):
+    print "DICT No:", i
+    similar[i] = len(set(dict['feature_vector']).intersection(set(test_features)))
+    print "Similar:", similar[i]
+    print "Label:", dict['label']
+    print "\n"
+
+knn = nlargest(5, similar, key=similar.get)
+print knn
+
+for neighbor in knn:
+    print main_list[neighbor]['label']
+
+
 #similar = {}
 #
 #for article_url in main_list:
