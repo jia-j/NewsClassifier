@@ -7,19 +7,23 @@ from heapq import nlargest
 import csv
 import os
 
-features = []
+# Value of k for k-NN
+k_neighbors = 8
+
 
 main_list = []
-# This is the main dictionary: {'url':{'feature_vector':[], 'label':'Tech'}..}
+# This is the main list containing all training feature_vectors
+# [{'feature_vector':['google',''..],'label':'Tech'},{..},..]
 
 #--------------------------------------------------#
-def prepareFeatures_csv():
+def prepareMainList():
     nonTechPath = '/Users/sunyambagga/GitHub/NewsClassifier/corpora/nonTech/'
     techPath = '/Users/sunyambagga/GitHub/NewsClassifier/corpora/tech/'
-
+    features = []
+    
     for file_name in os.listdir(nonTechPath):
         if '.txt' in file_name:
-            print "Reading file: ", file_name
+#            print "Reading file: ", file_name
             with open(nonTechPath+file_name, 'rb') as file:
                 tuple = file.readlines()
                 tuple[0] = tuple[0].decode("ascii", errors="ignore")
@@ -28,11 +32,11 @@ def prepareFeatures_csv():
                 features = get_features(tuple, 25)
                 main_list.append({'feature_vector':features, 'label':'Non-Tech'})
 
-    print "\n\n"
+    print "\nFinished reading Non-Tech corpus!"
     
     for file_name in os.listdir(techPath):
         if '.txt' in file_name:
-            print "Reading file: ", file_name
+#            print "Reading file: ", file_name
             with open(techPath+file_name, 'rb') as file:
                 tuple = file.readlines()
                 tuple[0] = tuple[0].decode("ascii", errors="ignore")
@@ -41,7 +45,8 @@ def prepareFeatures_csv():
                 features = get_features(tuple, 25)
                 main_list.append({'feature_vector':features, 'label':'Tech'})
 
-    print main_list
+    print "\nFinished reading Tech corpus!"
+#    print main_list
 
 #    with open('latest_features.csv', 'wb') as file:
 #        writer = csv.writer(file, delimiter=',', quotechar='"')
@@ -49,78 +54,52 @@ def prepareFeatures_csv():
 #        for dict in main_list:
 #            writer.writerow([dict['feature_vector'], dict['label']])
 
-    print "\nDONE!"
-
-prepareFeatures_csv()
 #--------------------------------------------------#
 
-
-#article = HindustanTimes("http://www.hindustantimes.com/tech/facebook-has-a-new-research-lab-led-by-ex-google-executive/story-7YYln1vKdh3tMihW6rZFNK.html")
-
-#article = HindustanTimes("http://www.hindustantimes.com/other-sports/dipa-karmakar-becomes-first-indian-gymnast-to-qualify-for-olympics/story-IvvCXJsxkkvt8Mq3p5telN.html")
-
-article = HindustanTimes("http://www.hindustantimes.com/india/drinking-beer-not-our-culture-use-water-to-save-lives-first-shiv-sena/story-gvpAmfDPpdlPZve6K8fLoL.html")
-
+#--------------------------------------------------#
 # k-NN
-#article[0] = article[0].decode("ascii", errors="ignore")
-#article[1] = article[1].decode("ascii", errors="ignore")
+def k_NN(main_list, test_features):
+    similar = {}
+
+    for i, dict in enumerate(main_list):
+        similar[i] = len(set(dict['feature_vector']).intersection(set(test_features)))
+
+    knn = nlargest(k_neighbors, similar, key=similar.get)
+    print knn
+
+    category = {'Tech':0, 'Non-Tech':0}
+
+    for neighbor in knn:
+        if main_list[neighbor]['label'] == 'Tech':
+            category['Tech'] += 1
+        else:
+            category['Non-Tech'] += 1
+
+    print category
+    label_knn = nlargest(1, category, key=category.get)[0]
+    return label_knn
+#--------------------------------------------------#
+
+#test_url = "http://www.hindustantimes.com/tech/facebook-has-a-new-research-lab-led-by-ex-google-executive/story-7YYln1vKdh3tMihW6rZFNK.html"
+test_url = "http://www.hindustantimes.com/tech/use-app-to-avoid-landslide-blocked-roads-in-sikkim-darjeeling/story-mMClbb9cuN0a5zip1mUTmK.html"
+#test_url = "http://www.hindustantimes.com/other-sports/dipa-karmakar-becomes-first-indian-gymnast-to-qualify-for-olympics/story-IvvCXJsxkkvt8Mq3p5telN.html"
+#test_url = "http://www.hindustantimes.com/india/drinking-beer-not-our-culture-use-water-to-save-lives-first-shiv-sena/story-gvpAmfDPpdlPZve6K8fLoL.html"
+
+article = HindustanTimes(test_url)
+article = list(article)
+article[0] = article[0].encode("ascii", errors="ignore")
+article[1] = article[1].encode("ascii", errors="ignore")
+
+# Prepare training feature vectors
+prepareMainList()
+
+# Represent test instance as a feature-vector
 test_features = get_features(article, 25)
-print "Test Features:", test_features
 
-similar = {}
+# Call k-NN algorithm
+knn_verdict = k_NN(main_list, test_features)
 
-for i,dict in enumerate(main_list):
-    print "DICT No:", i
-    similar[i] = len(set(dict['feature_vector']).intersection(set(test_features)))
-    print "Similar:", similar[i]
-    print "Label:", dict['label']
-    print "\n"
-
-knn = nlargest(5, similar, key=similar.get)
-print knn
-
-for neighbor in knn:
-    print main_list[neighbor]['label']
-
-
-#similar = {}
-#
-#for article_url in main_list:
-#    similar[article_url] = len(set(main_list[article_url]['feature_vector']).intersection(set(test_features)))
-#
-#print "SIMILAR DICT:\n\n"
-#print similar
-#
-#knn = nlargest(5, similar, key=similar.get)
-#category = defaultdict(int)
-#
-#for url_neighbor in knn:
-#    category[main_list[url_neighbor]['label']] += 1
-#
-#print "\n\n\n\n\n"
-#print category
-
-
-# TheHindu
-#h_url_nontech = 'http://www.thehindu.com/sport'
-#h_url_tech = 'http://www.thehindu.com/sci-tech/'
-#tech_summaries = TH_Scraper(h_url_tech, 1)
-#
-#nontech_summaries = TH_Scraper(h_url_nontech, 0)
-#
-#features = []
-#main_list = defaultdict(int)
-#
-#for techUrl in tech_summaries:
-#    features = get_features(tech_summaries[techUrl], 25)
-#    
-#    main_list[techUrl] = {'feature_vector':features, 'label':'Tech'}
-#
-#
-#for nontechUrl in nontech_summaries:
-#    features = get_features(nontech_summaries[nontechUrl], 25)
-#    main_list[nontechUrl] = {'feature_vector':features, 'label':'Non-Tech'}
-
+print "\nk-NN thinks it is a " + knn_verdict + " article."
 
 
 
