@@ -3,11 +3,11 @@ import csv
 
 def createCorpora():
     
-    techCount = 1
+    techCount = 56
     nontechCount = 1
     tech_path = '/Users/sunyambagga/GitHub/NewsClassifier/corpora/tech/'
     nontech_path = '/Users/sunyambagga/GitHub/NewsClassifier/corpora/non_tech/'
-    
+
     # WashingtonPost
     w_url_nontech = 'https://www.washingtonpost.com/sports'
     w_url_tech = 'https://www.washingtonpost.com/business/technology/'
@@ -89,4 +89,4 @@ def createCorpora():
             techCount += 1
 
 
-#createCorpora()
+createCorpora()
