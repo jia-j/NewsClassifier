@@ -5,7 +5,19 @@ from heapq import nlargest
 from nltk.corpus import stopwords
 from string import punctuation
 
-default_stopwords = set(stopwords.words('english') + list(punctuation))
+# Adding self-created stopwords to the "default_stopwords" list:
+file_path = "/Users/sunyambagga/GitHub/NewsClassifier/corpora/my_stopwords.txt"
+
+with open(file_path, 'rb') as file:
+    lines = file.readlines()
+    # To remove \r tags
+    my_stopwords = []
+    for line in lines:
+        my_stopwords.append(line.rstrip())
+
+
+default_stopwords = set(stopwords.words('english') + list(punctuation) + my_stopwords)
+
 
 def calculate_frequencies(sentences_ll, user_stopwords=None):  # sentences_ll is a list of lists
     frequency = defaultdict(int)    # default value : 0
