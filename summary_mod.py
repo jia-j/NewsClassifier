@@ -15,7 +15,6 @@ with open(file_path, 'rb') as file:
     for line in lines:
         my_stopwords.append(line.rstrip())
 
-
 default_stopwords = set(stopwords.words('english') + list(punctuation) + my_stopwords)
 
 
@@ -30,7 +29,8 @@ def calculate_frequencies(sentences_ll, user_stopwords=None):  # sentences_ll is
     for sentence in sentences_ll:
         for word in sentence:
             word = word.lower()
-            if word not in stopwords:
+            # Word not in stopwords and no punctuation in words ("'s")
+            if word not in stopwords and punctuation[6] not in word:
                 frequency[word] += 1
 
     # Normalise frequency
@@ -83,6 +83,16 @@ def get_features(article, n, user_stopwords=None):  # n is the desired no. of fe
         sentences_ll.append(words)
 
     frequency = calculate_frequencies(sentences_ll, user_stopwords)
+    
+    # Giving more importance to words in title:
+    max_key = nlargest(1, frequency, key=frequency.get)[0]
+    max_freq = frequency[max_key]
+
+    title = word_tokenize(title)
+    for word in title:
+        word = word.lower()
+        if word in frequency:
+            frequency[word] += max_freq/2
 
     return nlargest(n, frequency, key=frequency.get)
 
@@ -94,4 +104,4 @@ def get_features(article, n, user_stopwords=None):  # n is the desired no. of fe
 #article = (article_title, article_body)
 
 #print summarise(article, 2)
-#print get_features(article, 10, ["Kohli"])
+#print get_features(article, 10)

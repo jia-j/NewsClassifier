@@ -1,5 +1,5 @@
 from summary_mod import get_features
-from News_Scraper import HindustanTimes
+from News_Scraper import HindustanTimes, CNN
 
 import nltk
 from collections import defaultdict
@@ -32,7 +32,7 @@ def prepareTraining_data():
                     tuple[0] = tuple[0].decode("ascii", errors="ignore")
                     tuple[1] = tuple[1].decode("ascii", errors="ignore")
                     
-                    features = get_features(tuple, 25)
+                    features = get_features(tuple, 20)
                     training_data.append({'feature_vector':features, 'label':'Non-Tech'})
 
     print "\nFinished reading Non-Tech corpus!"
@@ -47,7 +47,7 @@ def prepareTraining_data():
                     tuple[0] = tuple[0].decode("ascii", errors="ignore")
                     tuple[1] = tuple[1].decode("ascii", errors="ignore")
                     
-                    features = get_features(tuple, 25)
+                    features = get_features(tuple, 20)
                     training_data.append({'feature_vector':features, 'label':'Tech'})
 
     print "\nFinished reading Tech corpus!"
@@ -64,21 +64,39 @@ prepareTraining_data()
 
 #--------------------------------------------------#
 # Test instance
+
+# Successful:
 #test_url = "http://www.hindustantimes.com/tech/facebook-has-a-new-research-lab-led-by-ex-google-executive/story-7YYln1vKdh3tMihW6rZFNK.html"
 #test_url = "http://www.hindustantimes.com/tech/use-app-to-avoid-landslide-blocked-roads-in-sikkim-darjeeling/story-mMClbb9cuN0a5zip1mUTmK.html"
+#test_url = "http://www.hindustantimes.com/tech/google-s-parent-alphabet-results-hit-by-rising-traffic-costs-strong-dollar/story-CF5eP29bZ83zJ7Ul9RcMPN.html"
 #test_url = "http://www.hindustantimes.com/other-sports/dipa-karmakar-becomes-first-indian-gymnast-to-qualify-for-olympics/story-IvvCXJsxkkvt8Mq3p5telN.html"
-test_url = "http://www.hindustantimes.com/cricket/lodha-panel-reforms-bcci-appoint-media-veteran-rahul-johri-as-ceo/story-4AhU2Teh8UOT1j9r4bqX4L.html"
+#test_url = "http://www.hindustantimes.com/cricket/india-to-play-its-first-day-night-test-against-nz-in-2016-anurag-thakur/story-QspGDULlJWX0EUo3S7xG8H.html"
+#test_url = "http://www.hindustantimes.com/football/epl-sanchez-settles-arsenal-nerves-with-a-brace-to-sink-west-brom/story-y3YZKnxase32YM7KmrmRrK.html"
+#test_url = "http://www.hindustantimes.com/tennis/boris-becker-hits-out-at-andy-murray-over-doping-comments/story-A2e8p128IZlq456uyyklCO.html"
+#test_url = "http://money.cnn.com/2016/04/19/technology/apple-macbook/index.html"
+#test_url = "http://money.cnn.com/2016/04/20/technology/google-android-lawsuit-europe/index.html"
+#test_url = "http://money.cnn.com/2016/04/18/investing/yahoo-bidders-verizon-aol/index.html"
+#test_url = "http://money.cnn.com/2016/04/18/technology/bill-campbell-intuit-death/index.html"
+#test_url = "http://edition.cnn.com/2016/04/21/football/brazil-neymar-olympics/index.html"
+#test_url = "http://edition.cnn.com/2016/04/20/tennis/french-open-arantxa-sanchez-vicario/index.html"
+#test_url = "http://money.cnn.com/2016/04/08/technology/adobe-emergency-update/index.html"
 
+
+
+
+#test_url = "http://edition.cnn.com/2016/04/16/tech/beam-inflatable-habitat-iss-irpt/index.html"
+#test_url = "http://www.hindustantimes.com/cricket/lodha-panel-reforms-bcci-appoint-media-veteran-rahul-johri-as-ceo/story-4AhU2Teh8UOT1j9r4bqX4L.html"
 #test_url = "http://www.hindustantimes.com/world/blast-rocks-afghan-capital-close-to-state-buildings-us-embassy/story-WLVzg9Va3A4oXsytpsAXbN.html"
 #test_url = "http://www.hindustantimes.com/india/drinking-beer-not-our-culture-use-water-to-save-lives-first-shiv-sena/story-gvpAmfDPpdlPZve6K8fLoL.html"
 
-article = HindustanTimes(test_url)
+article = CNN(test_url)
+#article = HindustanTimes(test_url)
 article = list(article)
 article[0] = article[0].encode("ascii", errors="ignore")
 article[1] = article[1].encode("ascii", errors="ignore")
 
 # Represent test instance as a feature-vector
-test_features = get_features(article, 25)
+test_features = get_features(article, 20)
 print "Test article: ", test_features
 print "\n\n"
 #--------------------------------------------------#
@@ -146,7 +164,7 @@ for dict in training_data:
 
 train_features_nb = nltk.classify.apply_features(feature_fn, training_data_nb)
 
-# trian_features_nb: [({'facebook':True,'cricket':False..},'Tech'),({},'Non-Tech'),(),()..]
+# trian_features_nb: [({'facebook':True, 'cricket':False..}, 'Tech'), ({},'Non-Tech'), (), ()..]
 
 #print "Creating Naive Bayes Classifier ...."
 NBClassifier = nltk.NaiveBayesClassifier.train(train_features_nb)
