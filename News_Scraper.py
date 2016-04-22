@@ -73,6 +73,34 @@ def NYtimes(url):
     
     return soup.title.text, articleBody
 
+# For CNN
+def CNN(url):
+    try:
+        webpage = urllib2.urlopen(url).read().decode('utf8')
+    except:
+        return (None, None)
+
+    soup = BeautifulSoup(webpage)
+    
+    # Article is inside <p> tags for money.cnn {except the last few <p> tags}
+    if "money.cnn" in url:
+        all_p_tags = []
+        for tag in soup.findAll("p"):
+            all_p_tags.append(tag)
+
+        article = ""
+        for x in all_p_tags[:-2]:
+            article += x.text
+
+    # Article inside <p class="zn-body__paragraph"> for edition.cnn
+    elif "edition.cnn" in url:
+        first_sent = soup.find("p", {"class" : "zn-body__paragraph"}).text
+        rest_of_article = " ".join(map(lambda x: x.text, soup.find_all("div", {"class" : "zn-body__paragraph"})))
+        article = first_sent + " " + rest_of_article
+    
+    return soup.title.text, article
+
+
 #-----------------------------------------------------------#
 
 # Main Scraper Function for Washington:
