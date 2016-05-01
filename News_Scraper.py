@@ -264,3 +264,45 @@ def HT_Scraper(url, dial=1):
 
 #url = 'http://www.hindustantimes.com/tech/'
 #print HT_Scraper(url, 1)
+
+
+# Main Scraper Function for CNN:
+# For tech: dial 1
+# For sports: dial 0
+def CNN_Scraper(url, dial=1):
+    webpage = urllib2.urlopen(url).read().decode('utf8')
+    soup = BeautifulSoup(webpage)
+
+    all_content = {}
+    errors = 0
+    
+    for link in soup.find_all('a'):
+        try:
+            _url = link['href']
+            
+            if dial == 1:
+                if '2016' in _url and '/technology/' in _url and 'video' not in _url:
+                    if _url not in all_content:
+                        article = CNN(_url)
+#                        print _url
+                        if len(article) > 0:
+                            all_content[_url] = article
+
+            else:
+                if '2016' in _url and ('/sport/' in _url or '/motorsport/' in _url or '/tennis/' in _url or '/football/' in _url or '/cricket/' in _url or '/golf/' in _url) and '/videos/' not in _url and '/gallery/' not in _url:
+                    if _url not in all_content:
+                        # a[href] returns just '/2016/04/15/sport/abcd.html'
+                        _url = 'http://edition.cnn.com'+_url
+#                        print _url
+                        article = CNN(_url)
+                        if len(article) > 0:
+                            all_content[_url] = article
+
+        except:
+            errors += 1
+
+    return all_content
+
+
+#url = 'http://edition.cnn.com/sport '
+#print CNN_Scraper(url, 0)
