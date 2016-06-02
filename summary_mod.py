@@ -33,12 +33,6 @@ def calculate_frequencies(sentences_ll, user_stopwords=None):  # sentences_ll is
             if word not in stopwords and punctuation[6] not in word:
                 frequency[word] += 1
 
-    # Normalise frequency
-#    max_frequency = max(frequency.values())
-#    
-#    for word in frequency.keys():
-#        frequency[word] /= float(max_frequency)
-
     return frequency
 
 
@@ -98,10 +92,10 @@ def get_features(article, n, user_stopwords=None):  # n is the desired no. of fe
 
 
 
-#article_body = "India's Test cricket captain Virat Kohli is the man of the moment - both on and off the field. The right-handed batsman has not only managed to light up the scoreboards with his stellar performance, he has also left behind India's ODI and T20 captain MS Dhoni, who is one of the highest paid brand endorsers in the country, by raking in the moolahs through his bat. According to a Times of India report, Dhoni pockets around Rs 6 crore for placing a Spartan sticker on his bat and Kohli is paid around Rs 8 crore for sticking an MRF logo on the willow. The Delhi batsman also earns around Rs 2 crore for endorsing apparel and shoes on the pitch. Dhoni, however, is ahead with Rs 8 crore when it comes to off-field brand endorsements such as TV ads. Kohli is paid around Rs 5 crore for the brands he endorses."
-#
-#article_title = "Virat on fire!"
-#article = (article_title, article_body)
+article_body = "India's Test cricket captain Virat Kohli is the man of the moment - both on and off the field. The right-handed batsman has not only managed to light up the scoreboards with his stellar performance, he has also left behind India's ODI and T20 captain MS Dhoni, who is one of the highest paid brand endorsers in the country, by raking in the moolahs through his bat. According to a Times of India report, Dhoni pockets around Rs 6 crore for placing a Spartan sticker on his bat and Kohli is paid around Rs 8 crore for sticking an MRF logo on the willow. The Delhi batsman also earns around Rs 2 crore for endorsing apparel and shoes on the pitch. Dhoni, however, is ahead with Rs 8 crore when it comes to off-field brand endorsements such as TV ads. Kohli is paid around Rs 5 crore for the brands he endorses."
 
-#print summarise(article, 2)
+article_title = "Virat on fire!"
+article = (article_title, article_body)
+#
+print summarise(article, 2)
 #print get_features(article, 10)

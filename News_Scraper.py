@@ -25,24 +25,6 @@ def WashingtonPost(url):
     
     return soup.title.text, articleBody
 
-
-# For TheHindu
-def TheHindu(url):
-    try:
-        webpage = urllib2.urlopen(url).read().decode('utf8')
-    except:
-        return (None, None)
-
-    soup = BeautifulSoup(webpage)
-
-    # It contains a sub-heading in a div "articleLead"
-    sub_heading = ''.join(soup.find("div", {"class" : "articleLead"}).text)
-    
-    articleBody = ' '.join(map(lambda x: x.text, soup.find_all("p", {"class" : "body"})))
-    
-    article = sub_heading + articleBody
-    return soup.title.text, article
-
 # For Hindustan Times
 def HindustanTimes(url):
     try:
@@ -147,40 +129,6 @@ def W_Scraper(url, dial=1):
 
 #url = "https://www.washingtonpost.com/sports"
 #print W_Scraper(url, 0)
-
-# Main Scraper Function for TheHindu:
-# For tech: dial 1
-# For sports: dial 0
-def TH_Scraper(url, dial=1):
-    webpage = urllib2.urlopen(url).read().decode('utf8')
-    soup = BeautifulSoup(webpage)
-
-    all_content = {}
-    errors = 0
-
-    for link in soup.find_all('a'):
-        try:
-            _url = link['href']
-            
-            if dial == 1:
-                if _url not in all_content and '/sci-tech/' in _url and 'article' in _url:
-                    article = TheHindu(_url)
-                    if len(article) > 0:
-                        all_content[_url] = article
-    
-            else:
-                if _url not in all_content and '/sport/' in _url and 'article' in _url:
-                    article = TheHindu(_url)
-                    if len(article) > 0:
-                        all_content[_url] = article
-
-        except:
-            errors += 1
-
-    return all_content
-
-#url = 'http://www.thehindu.com/sport'
-#print TH_Scraper(url, 0)
 
 
 # Main Scraper Function for NYTimes:

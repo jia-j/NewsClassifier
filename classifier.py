@@ -5,11 +5,10 @@ import nltk
 from collections import defaultdict
 from heapq import nlargest
 
-import csv
 import os
 
 # Value of k for k-NN
-k_neighbors = 8
+k_neighbors = 6
 feature_vec_len = 20
 # my_stopwords for "get_features()"
 my_stopwords = ['``','--']
@@ -52,14 +51,8 @@ def prepareTraining_data():
                     
                     features = get_features(tuple, feature_vec_len, my_stopwords)
                     training_data.append({'feature_vector':features, 'label':'Tech'})
-    print "Done!"
+    print "Done!\n"
 #    print training_data
-
-#    with open('learned_features.csv', 'wb') as file:
-#        writer = csv.writer(file, delimiter=',', quotechar='"')
-#        print "Writing features to CSV"
-#        for dict in training_data:
-#            writer.writerow([dict['feature_vector'], dict['label']])
 
 #--------------------------------------------------#
 prepareTraining_data()
@@ -236,7 +229,7 @@ for ap in append:
         svm_predictions.append(svm)
         knn_predictions.append(knn)
 
-        d += nb + svm + knn
+        d = nb + svm + knn
         if d >= 2:
             print "Tech\n\n"
             my_predictions.append(1)
@@ -247,17 +240,17 @@ for ap in append:
 
 
 
-print "\n\n\n\n\n\n"
-print "NB: ", nb_predictions
-print "\n"
-print "SVM:", svm_predictions
-print "\n"
-print "kNN:", knn_predictions
-print "\n"
-print "Clas", my_predictions
-print "\n"
-print "True", true_labels
-print "\n"
+#print "\n\n\n\n\n\n"
+#print "NB: ", nb_predictions
+#print "\n"
+#print "SVM:", svm_predictions
+#print "\n"
+#print "kNN:", knn_predictions
+#print "\n"
+#print "Clas", my_predictions
+#print "\n"
+#print "True", true_labels
+#print "\n"
 #print "NB: ", len(nb_predictions)
 #print "SVM:", len(svm_predictions)
 #print "kNN:", len(knn_predictions)
@@ -269,18 +262,18 @@ print "\n"
 from sklearn import metrics
 
 print "Confusion Matrix:\n", metrics.confusion_matrix(true_labels, my_predictions)
-print "\n\n"
-print "k-NN:\n", metrics.classification_report(true_labels, knn_predictions, labels=[0,1], target_names=['Non-Tech','Tech'])
-print "k-NN Accuracy:", metrics.accuracy_score(true_labels, knn_predictions)
-print "\n\n"
-print "SVM:\n", metrics.classification_report(true_labels, svm_predictions, labels=[0,1], target_names=['Non-Tech','Tech'])
-print "SVM Accuracy:", metrics.accuracy_score(true_labels, svm_predictions)
-print "\n\n"
-print "Naive Bayes:\n", metrics.classification_report(true_labels, nb_predictions, labels=[0,1], target_names=['Non-Tech','Tech'])
-print "NB Accuracy:", metrics.accuracy_score(true_labels, nb_predictions)
-print "\n\n"
-print "MyModel:\n", metrics.classification_report(true_labels, my_predictions, labels=[0,1], target_names=['Non-Tech','Tech'])
-print "My Accuracy:", metrics.accuracy_score(true_labels, my_predictions)
+print "\n"
+#print "k-NN:\n", metrics.classification_report(true_labels, knn_predictions, labels=[0,1], target_names=['Non-Tech','Tech'])
+#print "k-NN Accuracy:", metrics.accuracy_score(true_labels, knn_predictions)
+#print "\n\n"
+#print "SVM:\n", metrics.classification_report(true_labels, svm_predictions, labels=[0,1], target_names=['Non-Tech','Tech'])
+#print "SVM Accuracy:", metrics.accuracy_score(true_labels, svm_predictions)
+#print "\n\n"
+#print "Naive Bayes:\n", metrics.classification_report(true_labels, nb_predictions, labels=[0,1], target_names=['Non-Tech','Tech'])
+#print "NB Accuracy:", metrics.accuracy_score(true_labels, nb_predictions)
+#print "\n\n"
+print "Model:\n", metrics.classification_report(true_labels, my_predictions, labels=[0,1], target_names=['Non-Tech','Tech'])
+print "Accuracy:", metrics.accuracy_score(true_labels, my_predictions)
 print "\n\n"
 
 #--------------------------------------------------#
@@ -288,9 +281,11 @@ print "\n\n"
 
 
 ################################################
+
+# CREATING CORPORA:
+
 # Writing test articles
 
-## HindustanTimes
 #cnn_url_nontech = 'http://edition.cnn.com/sport'
 #cnn_url_tech = 'http://edition.cnn.com/tech'
 #cnn_tech_articles = CNN_Scraper(cnn_url_tech, 1)
@@ -320,37 +315,3 @@ print "\n\n"
 #        file.write(article)
 #        i += 1
 ################################################
-################################################
-# Writing all test articles into a file
-#test_url1 = "http://money.cnn.com/2016/04/18/technology/bill-campbell-intuit-death/index.html" # Only SVM fails
-#test_url2 = "http://money.cnn.com/2016/04/08/technology/adobe-emergency-update/index.html" # None fail (k-NN: 5 to 3)
-#test_url3 = "http://money.cnn.com/2016/04/20/technology/google-android-lawsuit-europe/index.html" # Badass link
-#test_url4 = "http://money.cnn.com/2016/04/19/technology/apple-macbook/index.html" # Badass link
-#test_url5 = "http://edition.cnn.com/2016/04/21/football/brazil-neymar-olympics/index.html" # Badass link
-#test_url6 = "http://edition.cnn.com/2016/04/20/tennis/french-open-arantxa-sanchez-vicario/index.html" # None fail (k-NN: 7 to 1)
-#test_url7 = "http://money.cnn.com/2016/04/18/investing/yahoo-bidders-verizon-aol/index.html" # None fail (k-NN: 7 to 1) #Tech
-#test_url8 = "http://money.cnn.com/2016/04/22/technology/apple-china-ibooks-itunes-movies-closed/index.html" #Badass
-#test_url9 = "http://money.cnn.com/2016/04/21/technology/comcast-xfinity-cable-app/index.html" #Badass
-#test_url10 = "http://money.cnn.com/2016/04/19/technology/intel-layoffs/index.html" #Badass
-#test_url11 = "http://edition.cnn.com/2016/04/23/tennis/rafael-nadal-kei-nishikori-barcelona/index.html" #Badass
-#test_url12 = "http://edition.cnn.com/2016/04/23/football/fa-cup-anthony-martial-manchester-united-everton/index.html" #Badass
-#test_url13 = "http://edition.cnn.com/2016/04/22/golf/tiger-woods-return/index.html" # Badass
-
-#test_urls = [test_url1, test_url2, test_url3, test_url4, test_url5, test_url6, test_url7, test_url8, test_url9, test_url10, test_url11, test_url12, test_url13]
-
-#i = 1
-#for url in test_urls:
-#    with open('/Users/sunyambagga/GitHub/NewsClassifier/test_articles/test_'+str(i)+'.txt', 'wb') as file:
-#        print "Writing ", i
-#        i += 1
-#        article = CNN(url)
-#        article = list(article)
-#        article[0] = article[0].encode("ascii", errors="ignore")
-#        article[1] = article[1].encode("ascii", errors="ignore")
-#        text = article[0] + "\n" + article[1]
-#        file.write(text)
-################################################
-
-
-
-
